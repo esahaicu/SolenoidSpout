@@ -1,4 +1,4 @@
-from pyfirmata import Arduino, util
+from pyfirmata import Arduino, util, OUTPUT
 import time
 import panel as pn
 pn.extension()
@@ -15,7 +15,8 @@ class SolenoidController:
         self.it.start()
         
         # Define the solenoid pin (digital pin 7 as output)
-        self.solenoid_pin = self.board.get_pin('d:7:o')
+        self.solenoid_pin = self.board.digital[7]
+        self.board.digital[7].mode=OUTPUT
 
     def open_solenoid(self):
         """Sets the solenoid pin to HIGH, opening the solenoid."""
@@ -27,10 +28,10 @@ class SolenoidController:
         self.solenoid_pin.write(0)
         print("Solenoid closed")
         
-    def droplet(self):
+    def droplet(self,dur):
         """Creates a droplet effect by opening and then quickly closing the solenoid"""
         self.open_solenoid()
-        time.sleep(0.5)  # Wait for 125 milliseconds
+        time.sleep(dur)  # Wait for 125 milliseconds
         self.close_solenoid()
         print("Droplet created")
 
@@ -71,7 +72,7 @@ class SolenoidApp:
 
     def on_droplet_click(self, event):
         self.update_status('Dropping')
-        self.solenoid_controller.droplet()
+        self.solenoid_controller.droplet(0.25)
         self.update_status('Waiting')
 
     def serve(self):
