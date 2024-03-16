@@ -1,0 +1,1 @@
+panel serve Solenoid_Controller.py --show --port 8080
